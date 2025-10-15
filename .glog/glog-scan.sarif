@@ -12,34 +12,22 @@
           "informationUri": "https://www.glog.ai",
           "rules": [
             {
-              "id": "a90794f4-a612-3bf1-8017-b74cc4aae185",
-              "help": {
-                "text": "",
-                "markdown": "## Description\n\n\"Unsecured Web Address\" vulnerability refers to the use of unencrypted HTTP protocol for communication between the client and the server. This can lead to potential security risks such as Man-in-the-Middle (MitM) attacks, where an attacker can intercept and possibly alter the communication between the client and the server. In C++ programming, this vulnerability can occur when libraries or functions that perform HTTP requests are used without secure protocols like HTTPS.\n\n## Mitigation Advice\n\nTo mitigate this vulnerability, always use secure protocols like HTTPS for web communication. HTTPS ensures that the data transferred between the client and the server is encrypted and cannot be easily intercepted or altered by attackers. \n\n## Source Code Fix Recommendation\n\nIf you are using the `curl` library to make HTTP requests, you can switch to HTTPS by simply changing the URL from `http://` to `https://`. \n\n```cpp\n// Vulnerable code\nCURL *curl = curl_easy_init();\ncurl_easy_setopt(curl, CURLOPT_URL, \"http://stackoverflow.com\");\n\n// Fixed code\nCURL *curl = curl_easy_init();\ncurl_easy_setopt(curl, CURLOPT_URL, \"https://stackoverflow.com\");\n```\n\n## Library Dependencies\n\nThe above code example requires the `libcurl` library.\n\n## References\n\n- [CWE-319: Cleartext Transmission of Sensitive Information](https://cwe.mitre.org/data/definitions/319.html)"
-              },
-              "properties": {
-                "tags": [
-                  "DS137138"
-                ]
-              }
-            },
-            {
-              "id": "f64d7ebb-c754-31fa-aa41-42f244ddf42b",
-              "help": {
-                "text": "",
-                "markdown": "## Description\n\n\"Unsecured Web Address\" vulnerability refers to the use of unencrypted HTTP protocol for communication between the client and the server. This can lead to potential security risks such as Man-in-the-Middle (MitM) attacks, where an attacker can intercept and possibly alter the communication between the client and the server. In C++ programming, this vulnerability can occur when libraries or functions that perform HTTP requests are used without secure protocols like HTTPS.\n\n## Mitigation Advice\n\nTo mitigate this vulnerability, always use secure protocols like HTTPS for web communication. HTTPS ensures that the data transferred between the client and the server is encrypted and cannot be easily intercepted or altered by attackers. \n\n## Source Code Fix Recommendation\n\nIf you are using the `curl` library to make HTTP requests, you can switch to HTTPS by simply changing the URL from `http://` to `https://`. \n\n```cpp\n// Vulnerable code\nCURL *curl = curl_easy_init();\ncurl_easy_setopt(curl, CURLOPT_URL, \"http://stackoverflow.com\");\n\n// Fixed code\nCURL *curl = curl_easy_init();\ncurl_easy_setopt(curl, CURLOPT_URL, \"https://stackoverflow.com\");\n```\n\n## Library Dependencies\n\nThe above code example requires the `libcurl` library.\n\n## References\n\n- [CWE-319: Cleartext Transmission of Sensitive Information](https://cwe.mitre.org/data/definitions/319.html)"
-              },
-              "properties": {
-                "tags": [
-                  "DS137138"
-                ]
-              }
-            },
-            {
               "id": "913104a6-c0e2-32f2-ba50-ceb365778aa1",
               "help": {
                 "text": "",
                 "markdown": "## Description\n\n\"Prohibited C Function Found\" is a vulnerability that occurs when a C++ program uses a function that is considered unsafe due to its potential to cause buffer overflow, format string vulnerabilities, integer overflow, etc. These functions are often prohibited because they do not perform bounds checking or input validation, which can lead to serious security issues.\n\nIn the provided code, `std::wcslen(str)` is a function that can lead to buffer overflow if the string `str` is not null-terminated. This function calculates the length of a wide string until it encounters a null character. If a null character is not found, the function may continue reading beyond the memory allocated for the string, leading to a buffer overflow.\n\n## Mitigation Advice\n\nTo mitigate this vulnerability, it is recommended to use safer alternatives that perform bounds checking or input validation. In this case, you can use `std::wstring` and its `length()` or `size()` member functions to get the length of the string.\n\n## Source Code Fix Recommendation\n\nReplace the `std::wcslen(str)` function with `std::wstring::length()` or `std::wstring::size()` as shown below:\n\n```cpp\nstd::wstring wstr = str;\ndetail::narrow_impl(wstr, wstr.length());\n```\n\n## Library Dependencies\n\nThe code example requires the following library dependencies:\n\n- `<string>`: This is required for `std::wstring`.\n\n## References\n\n- [OWASP C++](https://owasp.org/www-pdf-archive/OWASP_SCP_v2.pdf)\n- [CWE-242: Use of Inherently Dangerous Function](https://cwe.mitre.org/data/definitions/242.html)\n\nPlease note that the links provided are accessible to anonymous users at the time of writing this report."
+              },
+              "properties": {
+                "tags": [
+                  "DS154189"
+                ]
+              }
+            },
+            {
+              "id": "2c910491-3474-376e-9081-661bc14a6fb3",
+              "help": {
+                "text": "",
+                "markdown": "## Description\n\n\"Prohibited C Function Found\" is a vulnerability that occurs when a C++ program uses a function that is considered unsafe due to its potential to cause buffer overflows, format string vulnerabilities, or other security problems. The `getenv` function is one such function. It returns a pointer to a string that is associated with the matched environment variable name. This can lead to security vulnerabilities if the returned string is modified, or if the program does not handle the possibility that `getenv` could return a null pointer if the specified environment variable does not exist.\n\n## Mitigation Advice\n\nTo mitigate this vulnerability, avoid using the `getenv` function. Instead, consider using safer alternatives that are less prone to security issues. Always validate and sanitize input, and handle the possibility of null pointers. \n\n## Source Code Fix Recommendation\n\nInstead of using `getenv`, you can use a safer alternative like `getenv_s`. Here is an example of how to use it:\n\n```cpp\n#include <stdlib.h>\n\nchar* value;\nsize_t requiredSize;\n\ngetenv_s(&requiredSize, NULL, 0, \"ENV_VAR\");\nif (requiredSize == 0)\n{\n    printf(\"The environment variable does not exist.\\n\");\n}\nelse\n{\n    value = (char*) malloc(requiredSize * sizeof(char));\n    if (value != NULL)\n    {\n        getenv_s(&requiredSize, value, requiredSize, \"ENV_VAR\");\n        printf(\"The value of the environment variable is: %s\\n\", value);\n    }\n    free(value);\n}\n```\n\nIn this code, `getenv_s` is used to safely get the value of an environment variable. It checks if the environment variable exists and handles the possibility of a null pointer.\n\n## Library Dependencies\n\nThe code example requires the `stdlib.h` library.\n\n## References\n\n- [OWASP C++](https://owasp.org/www-pdf-archive/OWASP_SCP_v2.pdf)\n- [CWE-676: Use of Potentially Dangerous Function](https://cwe.mitre.org/data/definitions/676.html)"
               },
               "properties": {
                 "tags": [
@@ -56,18 +44,6 @@
               "properties": {
                 "tags": [
                   "DS140021"
-                ]
-              }
-            },
-            {
-              "id": "2c910491-3474-376e-9081-661bc14a6fb3",
-              "help": {
-                "text": "",
-                "markdown": "## Description\n\n\"Prohibited C Function Found\" is a vulnerability that occurs when a C++ program uses a function that is considered unsafe due to its potential to cause buffer overflows, format string vulnerabilities, or other security problems. The `getenv` function is one such function. It returns a pointer to a string that is associated with the matched environment variable name. This can lead to security vulnerabilities if the returned string is modified, or if the program does not handle the possibility that `getenv` could return a null pointer if the specified environment variable does not exist.\n\n## Mitigation Advice\n\nTo mitigate this vulnerability, avoid using the `getenv` function. Instead, consider using safer alternatives that are less prone to security issues. Always validate and sanitize input, and handle the possibility of null pointers. \n\n## Source Code Fix Recommendation\n\nInstead of using `getenv`, you can use a safer alternative like `getenv_s`. Here is an example of how to use it:\n\n```cpp\n#include <stdlib.h>\n\nchar* value;\nsize_t requiredSize;\n\ngetenv_s(&requiredSize, NULL, 0, \"ENV_VAR\");\nif (requiredSize == 0)\n{\n    printf(\"The environment variable does not exist.\\n\");\n}\nelse\n{\n    value = (char*) malloc(requiredSize * sizeof(char));\n    if (value != NULL)\n    {\n        getenv_s(&requiredSize, value, requiredSize, \"ENV_VAR\");\n        printf(\"The value of the environment variable is: %s\\n\", value);\n    }\n    free(value);\n}\n```\n\nIn this code, `getenv_s` is used to safely get the value of an environment variable. It checks if the environment variable exists and handles the possibility of a null pointer.\n\n## Library Dependencies\n\nThe code example requires the `stdlib.h` library.\n\n## References\n\n- [OWASP C++](https://owasp.org/www-pdf-archive/OWASP_SCP_v2.pdf)\n- [CWE-676: Use of Potentially Dangerous Function](https://cwe.mitre.org/data/definitions/676.html)"
-              },
-              "properties": {
-                "tags": [
-                  "DS154189"
                 ]
               }
             },
@@ -96,6 +72,18 @@
               }
             },
             {
+              "id": "7761f7ac-9322-37e9-8ce0-ed9dc42b3c3d",
+              "help": {
+                "text": "",
+                "markdown": "## Description\n\n\"Detected Prohibited C Function\" vulnerability in C++ refers to the use of certain C standard library functions that are known to be dangerous due to their potential to cause buffer overflows, format string vulnerabilities, or other problems. These functions are often prohibited in secure coding standards.\n\nThe `wcsrtombs` function is one of these prohibited functions. It converts a wide-character string to a multibyte string. However, if the destination buffer is not large enough to hold the converted string, a buffer overflow can occur, leading to unpredictable behavior, crashes, or security vulnerabilities.\n\n## Mitigation Advice\n\nAvoid using the `wcsrtombs` function. Instead, use safer alternatives that perform bounds checking to prevent buffer overflows. If you must use `wcsrtombs`, ensure that the destination buffer is large enough to hold the converted string, including the null terminator.\n\n## Source Code Fix Recommendation\n\nReplace `wcsrtombs` with a safer alternative such as `wcstombs_s` (on Windows) or `mbsnrtowcs` (on POSIX systems). These functions perform bounds checking to prevent buffer overflows.\n\nHere is an example of how to use `wcstombs_s`:\n\n```cpp\n#include <locale.h>\n#include <wchar.h>\n#include <errno.h>\n\nsize_t len;\nerrno_t err = wcstombs_s(&len, dest, destSize, src, _TRUNCATE);\nif (err != 0) {\n    // handle error\n}\n```\n\nAnd here is an example of how to use `mbsnrtowcs`:\n\n```cpp\n#include <locale.h>\n#include <wchar.h>\n#include <errno.h>\n\nmbstate_t state = mbstate_t();\nconst wchar_t* src_tmp = src;\nsize_t len = mbsnrtowcs(NULL, &src_tmp, srcSize, 0, &state);\nif (len == (size_t)-1) {\n    // handle error\n}\nchar* dest = new char[len + 1];\nmbsnrtowcs(dest, &src_tmp, srcSize, len, &state);\ndest[len] = '\\0';\n```\n\n## Library Dependencies\n\nThe code examples above require the following library dependencies:\n\n- `<locale.h>`: for locale functions\n- `<wchar.h>`: for wide-character functions\n- `<errno.h>`: for error handling\n\n## References\n\n- [OWASP C++ Secure Coding Practices](https://cheatsheetseries.owasp.org/cheatsheets/C-Based_Toolchain_Hardening_Cheat_Sheet.html)\n- [CWE-676: Use of Potentially Dangerous Function](https://cwe.mitre.org/data/definitions/676.html)"
+              },
+              "properties": {
+                "tags": [
+                  "DS154189"
+                ]
+              }
+            },
+            {
               "id": "79ab5b78-9e7f-3749-b932-ab53782ce9aa",
               "help": {
                 "text": "",
@@ -108,7 +96,7 @@
               }
             },
             {
-              "id": "88c1823c-f73f-3e6d-bba2-cbe84d2ee534",
+              "id": "76e61e6d-817b-3798-9c50-100318ea0644",
               "help": {
                 "text": "",
                 "markdown": "## Description\n\n\"Detected Prohibited C Function\" vulnerability in C++ refers to the use of certain C standard library functions that are known to be dangerous due to their potential to cause buffer overflows, format string vulnerabilities, or other problems. These functions are often prohibited in secure coding standards.\n\nThe `wcsrtombs` function is one of these prohibited functions. It converts a wide-character string to a multibyte string. However, if the destination buffer is not large enough to hold the converted string, a buffer overflow can occur, leading to unpredictable behavior, crashes, or security vulnerabilities.\n\n## Mitigation Advice\n\nAvoid using the `wcsrtombs` function. Instead, use safer alternatives that perform bounds checking to prevent buffer overflows. If you must use `wcsrtombs`, ensure that the destination buffer is large enough to hold the converted string, including the null terminator.\n\n## Source Code Fix Recommendation\n\nReplace `wcsrtombs` with a safer alternative such as `wcstombs_s` (on Windows) or `mbsnrtowcs` (on POSIX systems). These functions perform bounds checking to prevent buffer overflows.\n\nHere is an example of how to use `wcstombs_s`:\n\n```cpp\n#include <locale.h>\n#include <wchar.h>\n#include <errno.h>\n\nsize_t len;\nerrno_t err = wcstombs_s(&len, dest, destSize, src, _TRUNCATE);\nif (err != 0) {\n    // handle error\n}\n```\n\nAnd here is an example of how to use `mbsnrtowcs`:\n\n```cpp\n#include <locale.h>\n#include <wchar.h>\n#include <errno.h>\n\nmbstate_t state = mbstate_t();\nconst wchar_t* src_tmp = src;\nsize_t len = mbsnrtowcs(NULL, &src_tmp, srcSize, 0, &state);\nif (len == (size_t)-1) {\n    // handle error\n}\nchar* dest = new char[len + 1];\nmbsnrtowcs(dest, &src_tmp, srcSize, len, &state);\ndest[len] = '\\0';\n```\n\n## Library Dependencies\n\nThe code examples above require the following library dependencies:\n\n- `<locale.h>`: for locale functions\n- `<wchar.h>`: for wide-character functions\n- `<errno.h>`: for error handling\n\n## References\n\n- [OWASP C++ Secure Coding Practices](https://cheatsheetseries.owasp.org/cheatsheets/C-Based_Toolchain_Hardening_Cheat_Sheet.html)\n- [CWE-676: Use of Potentially Dangerous Function](https://cwe.mitre.org/data/definitions/676.html)"
@@ -132,19 +120,7 @@
               }
             },
             {
-              "id": "7761f7ac-9322-37e9-8ce0-ed9dc42b3c3d",
-              "help": {
-                "text": "",
-                "markdown": "## Description\n\n\"Detected Prohibited C Function\" vulnerability in C++ refers to the use of certain C standard library functions that are known to be dangerous due to their potential to cause buffer overflows, format string vulnerabilities, or other problems. These functions are often prohibited in secure coding standards.\n\nThe `wcsrtombs` function is one of these prohibited functions. It converts a wide-character string to a multibyte string. However, if the destination buffer is not large enough to hold the converted string, a buffer overflow can occur, leading to unpredictable behavior, crashes, or security vulnerabilities.\n\n## Mitigation Advice\n\nAvoid using the `wcsrtombs` function. Instead, use safer alternatives that perform bounds checking to prevent buffer overflows. If you must use `wcsrtombs`, ensure that the destination buffer is large enough to hold the converted string, including the null terminator.\n\n## Source Code Fix Recommendation\n\nReplace `wcsrtombs` with a safer alternative such as `wcstombs_s` (on Windows) or `mbsnrtowcs` (on POSIX systems). These functions perform bounds checking to prevent buffer overflows.\n\nHere is an example of how to use `wcstombs_s`:\n\n```cpp\n#include <locale.h>\n#include <wchar.h>\n#include <errno.h>\n\nsize_t len;\nerrno_t err = wcstombs_s(&len, dest, destSize, src, _TRUNCATE);\nif (err != 0) {\n    // handle error\n}\n```\n\nAnd here is an example of how to use `mbsnrtowcs`:\n\n```cpp\n#include <locale.h>\n#include <wchar.h>\n#include <errno.h>\n\nmbstate_t state = mbstate_t();\nconst wchar_t* src_tmp = src;\nsize_t len = mbsnrtowcs(NULL, &src_tmp, srcSize, 0, &state);\nif (len == (size_t)-1) {\n    // handle error\n}\nchar* dest = new char[len + 1];\nmbsnrtowcs(dest, &src_tmp, srcSize, len, &state);\ndest[len] = '\\0';\n```\n\n## Library Dependencies\n\nThe code examples above require the following library dependencies:\n\n- `<locale.h>`: for locale functions\n- `<wchar.h>`: for wide-character functions\n- `<errno.h>`: for error handling\n\n## References\n\n- [OWASP C++ Secure Coding Practices](https://cheatsheetseries.owasp.org/cheatsheets/C-Based_Toolchain_Hardening_Cheat_Sheet.html)\n- [CWE-676: Use of Potentially Dangerous Function](https://cwe.mitre.org/data/definitions/676.html)"
-              },
-              "properties": {
-                "tags": [
-                  "DS154189"
-                ]
-              }
-            },
-            {
-              "id": "76e61e6d-817b-3798-9c50-100318ea0644",
+              "id": "88c1823c-f73f-3e6d-bba2-cbe84d2ee534",
               "help": {
                 "text": "",
                 "markdown": "## Description\n\n\"Detected Prohibited C Function\" vulnerability in C++ refers to the use of certain C standard library functions that are known to be dangerous due to their potential to cause buffer overflows, format string vulnerabilities, or other problems. These functions are often prohibited in secure coding standards.\n\nThe `wcsrtombs` function is one of these prohibited functions. It converts a wide-character string to a multibyte string. However, if the destination buffer is not large enough to hold the converted string, a buffer overflow can occur, leading to unpredictable behavior, crashes, or security vulnerabilities.\n\n## Mitigation Advice\n\nAvoid using the `wcsrtombs` function. Instead, use safer alternatives that perform bounds checking to prevent buffer overflows. If you must use `wcsrtombs`, ensure that the destination buffer is large enough to hold the converted string, including the null terminator.\n\n## Source Code Fix Recommendation\n\nReplace `wcsrtombs` with a safer alternative such as `wcstombs_s` (on Windows) or `mbsnrtowcs` (on POSIX systems). These functions perform bounds checking to prevent buffer overflows.\n\nHere is an example of how to use `wcstombs_s`:\n\n```cpp\n#include <locale.h>\n#include <wchar.h>\n#include <errno.h>\n\nsize_t len;\nerrno_t err = wcstombs_s(&len, dest, destSize, src, _TRUNCATE);\nif (err != 0) {\n    // handle error\n}\n```\n\nAnd here is an example of how to use `mbsnrtowcs`:\n\n```cpp\n#include <locale.h>\n#include <wchar.h>\n#include <errno.h>\n\nmbstate_t state = mbstate_t();\nconst wchar_t* src_tmp = src;\nsize_t len = mbsnrtowcs(NULL, &src_tmp, srcSize, 0, &state);\nif (len == (size_t)-1) {\n    // handle error\n}\nchar* dest = new char[len + 1];\nmbsnrtowcs(dest, &src_tmp, srcSize, len, &state);\ndest[len] = '\\0';\n```\n\n## Library Dependencies\n\nThe code examples above require the following library dependencies:\n\n- `<locale.h>`: for locale functions\n- `<wchar.h>`: for wide-character functions\n- `<errno.h>`: for error handling\n\n## References\n\n- [OWASP C++ Secure Coding Practices](https://cheatsheetseries.owasp.org/cheatsheets/C-Based_Toolchain_Hardening_Cheat_Sheet.html)\n- [CWE-676: Use of Potentially Dangerous Function](https://cwe.mitre.org/data/definitions/676.html)"
@@ -180,14 +156,14 @@
               }
             },
             {
-              "id": "2e1e9cba-9e14-3be2-b1dc-8979450f12d4",
+              "id": "36eb4e25-8896-3116-a207-c403d125d87c",
               "help": {
                 "text": "",
-                "markdown": "This finding is considered a genuine vulnerability because the classification indicates a risk of undefined behavior due to possible overlap between the source and destination memory regions in the memory copy operation. The analysis detected that the source and destination may overlap based on data flow, which can cause unpredictable results when using functions like memcpy. The verdict for this call site is also marked as 'GENUINE', confirming the high confidence in this issue. The source and destination are both pointers, and there is no evidence of explicit checks or guards to prevent overlap. Additionally, the size argument is not derived from the destination's capacity, and there is no explicit null-termination or other mitigating logic present. The source and destination are both confirmed to be non-null at this point, so the primary risk is the undefined behavior from overlapping memory regions.\n\n## In Context Remediation\nTo prevent undefined behavior when the source and destination memory regions may overlap, use `memmove` instead of `memcpy`. `memmove` is designed to handle overlapping memory safely. Replace the original call with:\n\n```cpp\nmemmove(buf, v, sizeof(v));\n```\n\nThis change ensures that the memory copy will work correctly even if the source and destination regions overlap.\n\n## References\n- [OWASP C-Based Toolchain Hardening Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/C-Based_Toolchain_Hardening_Cheat_Sheet.html)\n- [CWE-119: Improper Restriction of Operations within the Bounds of a Memory Buffer](https://cwe.mitre.org/data/definitions/119.html)\n- [CWE-787: Out-of-bounds Write](https://cwe.mitre.org/data/definitions/787.html)\n- [OWASP Buffer Overflow](https://owasp.org/www-community/vulnerabilities/Buffer_Overflow)\n\n___\n"
+                "markdown": "## Description\n\nThe \"Prohibited C Function Identified\" vulnerability in C++ programming language refers to the use of certain C standard library functions that are considered unsafe due to their potential to cause buffer overflows, format string vulnerabilities, or other security issues. In this case, the `printf` function is used, which can lead to format string vulnerabilities if not used carefully.\n\nFormat string vulnerabilities occur when the format string passed to `printf` (or similar functions) is not a constant, but is instead constructed dynamically or influenced by an attacker. This can allow an attacker to execute arbitrary code, read the stack, or cause a crash.\n\n## Mitigation Advice\n\nTo mitigate this vulnerability, it is recommended to avoid using `printf` and similar functions with a non-constant format string. Instead, use safer alternatives that do not have this vulnerability, such as `cout` in C++.\n\n## Source Code Fix Recommendation\n\nHere is a fixed version of the code:\n\n```cpp\n#include <iostream>\n#include <vector>\n\nstd::vector<int> samples;\nint trial;\n\n// ...\n\nstd::cout << static_cast<double>(samples[trial]) << \" ms\\n\";\n```\n\n## Library Dependencies\n\nThe code example requires the following library dependencies:\n\n- `<iostream>`: for `std::cout`\n- `<vector>`: for `std::vector`\n\n## References\n\n- [CWE-134: Use of Externally-Controlled Format String](https://cwe.mitre.org/data/definitions/134.html)"
               },
               "properties": {
                 "tags": [
-                  "DS121708"
+                  "DS154189"
                 ]
               }
             },
@@ -230,46 +206,10 @@
               }
             },
             {
-              "id": "7474cfd7-d858-330b-8f4f-355943ea6882",
-              "help": {
-                "text": "",
-                "markdown": "This finding is considered a genuine vulnerability because the classification indicates a risk of undefined behavior due to possible overlap between the source and destination memory regions during the memory copy operation. The analysis detected that the source and destination may refer to overlapping memory areas, which is not allowed for the memcpy function and can result in unpredictable program behavior or data corruption. Additionally, there are no checks ensuring that the source and destination pointers are non-null, which further increases the risk of runtime errors. The absence of explicit bounds checks or guards, and the lack of evidence that the copy size is derived from the actual buffer capacity, all contribute to the severity of this issue.\n\n## In Context Remediation\nTo prevent undefined behavior when copying memory regions that may overlap, use `memmove` instead of `memcpy`. The `memmove` function safely handles overlapping memory areas. Additionally, ensure that both source and destination pointers are not null and that the copy size does not exceed the capacity of either buffer. For example:\n\n```c\nif (copy.buf != NULL && buf != NULL && bsize <= MAX_BUFFER_SIZE) {\n    memmove(copy.buf, buf, bsize);\n}\n```\nReplace `MAX_BUFFER_SIZE` with the actual size of the destination buffer if known. Always validate pointers and sizes before performing memory operations to avoid undefined behavior and potential security vulnerabilities.\n\n## References\n- [C-Based Toolchain Hardening Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/C-Based_Toolchain_Hardening_Cheat_Sheet.html)\n- [CWE-119: Improper Restriction of Operations within the Bounds of a Memory Buffer](https://cwe.mitre.org/data/definitions/119.html)\n- [CWE-787: Out-of-bounds Write](https://cwe.mitre.org/data/definitions/787.html)\n- [OWASP Buffer Overflow](https://owasp.org/www-community/vulnerabilities/Buffer_Overflow)\n\n___\n"
-              },
-              "properties": {
-                "tags": [
-                  "DS121708"
-                ]
-              }
-            },
-            {
-              "id": "36eb4e25-8896-3116-a207-c403d125d87c",
-              "help": {
-                "text": "",
-                "markdown": "## Description\n\nThe \"Prohibited C Function Identified\" vulnerability in C++ programming language refers to the use of certain C standard library functions that are considered unsafe due to their potential to cause buffer overflows, format string vulnerabilities, or other security issues. In this case, the `printf` function is used, which can lead to format string vulnerabilities if not used carefully.\n\nFormat string vulnerabilities occur when the format string passed to `printf` (or similar functions) is not a constant, but is instead constructed dynamically or influenced by an attacker. This can allow an attacker to execute arbitrary code, read the stack, or cause a crash.\n\n## Mitigation Advice\n\nTo mitigate this vulnerability, it is recommended to avoid using `printf` and similar functions with a non-constant format string. Instead, use safer alternatives that do not have this vulnerability, such as `cout` in C++.\n\n## Source Code Fix Recommendation\n\nHere is a fixed version of the code:\n\n```cpp\n#include <iostream>\n#include <vector>\n\nstd::vector<int> samples;\nint trial;\n\n// ...\n\nstd::cout << static_cast<double>(samples[trial]) << \" ms\\n\";\n```\n\n## Library Dependencies\n\nThe code example requires the following library dependencies:\n\n- `<iostream>`: for `std::cout`\n- `<vector>`: for `std::vector`\n\n## References\n\n- [CWE-134: Use of Externally-Controlled Format String](https://cwe.mitre.org/data/definitions/134.html)"
-              },
-              "properties": {
-                "tags": [
-                  "DS154189"
-                ]
-              }
-            },
-            {
               "id": "3f785c5e-ea2f-3f0a-bcf2-ee07b36cbb3b",
               "help": {
                 "text": "",
                 "markdown": "## Description\n\nIn C++ programming, \"Avoid Using Weak or Non-Cryptographic Random Number Generators\" vulnerability refers to the use of weak or non-cryptographic random number generators in the code. This can lead to predictability in the generated numbers, which can be exploited by attackers to predict the behavior of the program, leading to security vulnerabilities.\n\nWeak or non-cryptographic random number generators do not provide a sufficient level of randomness and can produce predictable outcomes. They are not suitable for generating cryptographic keys or other sensitive data.\n\n## Mitigation Advice\n\nTo mitigate this vulnerability, use a strong cryptographic random number generator. In C++, you can use the `<random>` library, which provides a variety of random number generators. For cryptographic purposes, consider using a library specifically designed for cryptography, such as OpenSSL.\n\n## Source Code Fix Recommendation\n\nHere is an example of how to use the `<random>` library to generate random numbers in C++:\n\n```cpp\n#include <random>\n\nstd::random_device rd;  // Will be used to obtain a seed for the random number engine\nstd::mt19937 gen(rd()); // Standard mersenne_twister_engine seeded with rd()\nstd::uniform_int_distribution<> distrib(1, 6);\n\nint random_number = distrib(gen);\n```\n\nIn this code, `std::random_device` is a uniformly-distributed integer random number generator that produces non-deterministic random numbers. `std::mt19937` is a Mersenne Twister random number generator, and `std::uniform_int_distribution` is a random number distribution that produces integers according to a uniform discrete distribution.\n\n## Library Dependencies\n\nThe above code example requires the `<random>` library.\n\n## References\n\n- [CWE-338: Use of Cryptographically Weak PRNG](https://cwe.mitre.org/data/definitions/338.html)"
-              },
-              "properties": {
-                "tags": [
-                  "DS148264"
-                ]
-              }
-            },
-            {
-              "id": "5c308817-824c-3fd4-b722-2acf44b3c4c0",
-              "help": {
-                "text": "",
-                "markdown": "## Description\n\nIn C++ programming, the vulnerability \"Avoid Using Weak or Non-Cryptographic Random Number Generators\" refers to the use of weak or non-cryptographic random number generators that can lead to predictable or easily guessable values. This can be exploited by attackers to predict the outcome of the program, leading to security breaches.\n\nIn the given code snippet, `std::shuffle(testcase.begin(), testcase.end(), g)`, the function `std::shuffle` is used to randomly shuffle elements in the range `[first, last)`. The third argument `g` is a random number generator. If `g` is a weak or non-cryptographic random number generator, it can lead to the aforementioned vulnerability.\n\n## Mitigation Advice\n\nTo mitigate this vulnerability, use a strong and cryptographic random number generator. In C++, you can use `std::random_device` as a source of non-deterministic random numbers, or `std::mt19937` (Mersenne Twister 19937 generator) as a deterministic random number generator with a large period.\n\n## Source Code Fix Recommendation\n\nHere is a fixed version of the code:\n\n```cpp\n#include <random>\n#include <algorithm>\n#include <vector>\n\nstd::vector<int> testcase;\nstd::random_device rd;\nstd::mt19937 g(rd());\n\nstd::shuffle(testcase.begin(), testcase.end(), g);\n```\n\nIn this code, `std::random_device` is used to seed the Mersenne Twister generator `std::mt19937`, which is then used as the random number generator for `std::shuffle`.\n\n## Library Dependencies\n\nThe code requires the following libraries:\n\n- `<random>`: for `std::random_device` and `std::mt19937`\n- `<algorithm>`: for `std::shuffle`\n- `<vector>`: for `std::vector`\n\n## References\n\n- [CWE-338: Use of Cryptographically Weak PRNG](https://cwe.mitre.org/data/definitions/338.html)"
               },
               "properties": {
                 "tags": [
@@ -314,6 +254,18 @@
               }
             },
             {
+              "id": "5c308817-824c-3fd4-b722-2acf44b3c4c0",
+              "help": {
+                "text": "",
+                "markdown": "## Description\n\nIn C++ programming, the vulnerability \"Avoid Using Weak or Non-Cryptographic Random Number Generators\" refers to the use of weak or non-cryptographic random number generators that can lead to predictable or easily guessable values. This can be exploited by attackers to predict the outcome of the program, leading to security breaches.\n\nIn the given code snippet, `std::shuffle(testcase.begin(), testcase.end(), g)`, the function `std::shuffle` is used to randomly shuffle elements in the range `[first, last)`. The third argument `g` is a random number generator. If `g` is a weak or non-cryptographic random number generator, it can lead to the aforementioned vulnerability.\n\n## Mitigation Advice\n\nTo mitigate this vulnerability, use a strong and cryptographic random number generator. In C++, you can use `std::random_device` as a source of non-deterministic random numbers, or `std::mt19937` (Mersenne Twister 19937 generator) as a deterministic random number generator with a large period.\n\n## Source Code Fix Recommendation\n\nHere is a fixed version of the code:\n\n```cpp\n#include <random>\n#include <algorithm>\n#include <vector>\n\nstd::vector<int> testcase;\nstd::random_device rd;\nstd::mt19937 g(rd());\n\nstd::shuffle(testcase.begin(), testcase.end(), g);\n```\n\nIn this code, `std::random_device` is used to seed the Mersenne Twister generator `std::mt19937`, which is then used as the random number generator for `std::shuffle`.\n\n## Library Dependencies\n\nThe code requires the following libraries:\n\n- `<random>`: for `std::random_device` and `std::mt19937`\n- `<algorithm>`: for `std::shuffle`\n- `<vector>`: for `std::vector`\n\n## References\n\n- [CWE-338: Use of Cryptographically Weak PRNG](https://cwe.mitre.org/data/definitions/338.html)"
+              },
+              "properties": {
+                "tags": [
+                  "DS148264"
+                ]
+              }
+            },
+            {
               "id": "36521c3e-ad9b-3685-a485-51f1c18cf064",
               "help": {
                 "text": "",
@@ -322,6 +274,30 @@
               "properties": {
                 "tags": [
                   "DS154189"
+                ]
+              }
+            },
+            {
+              "id": "2e1e9cba-9e14-3be2-b1dc-8979450f12d4",
+              "help": {
+                "text": "",
+                "markdown": "This finding is classified as a genuine vulnerability because the analysis identified a risk of undefined behavior due to possible overlap between the source and destination memory regions in the memory copy operation. The destination and source may refer to overlapping memory, as indicated by the dataflow analysis. This can lead to unpredictable program behavior, data corruption, or crashes. The use of a direct memory copy function without ensuring that the source and destination do not overlap is unsafe. There are no explicit checks or guards in the code to prevent this overlap, and the function verdict confirms the issue as genuine. The source and destination are both non-null, but the overlap risk remains the primary concern.\n\n## In Context Remediation\nTo prevent undefined behavior when the source and destination memory regions may overlap, use a memory move function that safely handles overlapping regions. Replace the direct memory copy with a function designed for this purpose:\n\n```cpp\nmemmove(buf, v, sizeof(v));\n```\n\nThis change ensures that the operation is safe even if the source and destination overlap, as `memmove` is specifically designed to handle such cases. Always verify that the size argument accurately reflects the intended number of bytes to copy, and that both pointers are valid and properly allocated.\n\n## References\n- [OWASP C-Based Toolchain Hardening Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/C-Based_Toolchain_Hardening_Cheat_Sheet.html)\n- [CWE-119: Improper Restriction of Operations within the Bounds of a Memory Buffer](https://cwe.mitre.org/data/definitions/119.html)\n- [CWE-787: Out-of-bounds Write](https://cwe.mitre.org/data/definitions/787.html)\n- [OWASP Buffer Overflow](https://owasp.org/www-community/vulnerabilities/Buffer_Overflow)\n\n___\n"
+              },
+              "properties": {
+                "tags": [
+                  "DS121708"
+                ]
+              }
+            },
+            {
+              "id": "7474cfd7-d858-330b-8f4f-355943ea6882",
+              "help": {
+                "text": "",
+                "markdown": "This finding is classified as a genuine vulnerability because the analysis identified a risk of undefined behavior due to possible overlap between the source and destination memory regions in the memory copy operation. The destination and source may refer to overlapping memory, as indicated by the data flow analysis. Additionally, there are no checks ensuring that the source and destination are non-null, which increases the risk of null pointer dereference. The absence of explicit bounds checks or guards further increases the likelihood of a real issue. The verdict is supported by the classification and the high-confidence verdict from the analysis.\n\n## In Context Remediation\nTo prevent undefined behavior when copying memory, ensure that the source and destination buffers do not overlap. If overlap is possible, use `memmove` instead of `memcpy`, as `memmove` is designed to handle overlapping regions safely. Additionally, add explicit checks to ensure that neither the source nor the destination pointers are null before performing the copy operation. For example:\n\n```c\nif (copy.buf != NULL && buf != NULL && copy.buf != buf) {\n    memmove(copy.buf, buf, bsize);\n}\n```\n\nThis approach ensures that the copy is only performed when both pointers are valid and not the same, and uses `memmove` to avoid undefined behavior if overlap occurs.\n\n## References\n- [C-Based Toolchain Hardening Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/C-Based_Toolchain_Hardening_Cheat_Sheet.html)\n- [OWASP Buffer Overflow](https://owasp.org/www-community/vulnerabilities/Buffer_Overflow)\n- [CWE-119: Improper Restriction of Operations within the Bounds of a Memory Buffer](https://cwe.mitre.org/data/definitions/119.html)\n- [CWE-120: Buffer Copy without Checking Size of Input ('Classic Buffer Overflow')](https://cwe.mitre.org/data/definitions/120.html)\n- [CWE-787: Out-of-bounds Write](https://cwe.mitre.org/data/definitions/787.html)\n\n___\n"
+              },
+              "properties": {
+                "tags": [
+                  "DS121708"
                 ]
               }
             }
@@ -337,72 +313,7 @@
       "language": "en-US",
       "results": [
         {
-          "ruleId": "a90794f4-a612-3bf1-8017-b74cc4aae185",
-          "kind": "fail",
-          "level": "warning",
-          "message": {
-            "text": "Unsecured Web Address"
-          },
-          "locations": [
-            {
-              "physicalLocation": {
-                "artifactLocation": {
-                  "uri": "shared/CLI11.hpp"
-                },
-                "region": {
-                  "startLine": 515,
-                  "startColumn": 20,
-                  "endLine": 515,
-                  "endColumn": 44,
-                  "charOffset": 15849,
-                  "charLength": 24,
-                  "snippet": {
-                    "text": "http://stackoverflow.com",
-                    "rendered": {
-                      "text": "http://stackoverflow.com",
-                      "markdown": "`http://stackoverflow.com`"
-                    }
-                  },
-                  "sourceLanguage": "cpp"
-                }
-              }
-            }
-          ],
-          "fixes": [
-            {
-              "description": {
-                "text": "An HTTP-based URL without TLS was detected."
-              },
-              "artifactChanges": [
-                {
-                  "artifactLocation": {
-                    "uri": "shared/CLI11.hpp"
-                  },
-                  "replacements": [
-                    {
-                      "deletedRegion": {
-                        "charOffset": 15849,
-                        "charLength": 24
-                      },
-                      "insertedContent": {
-                        "text": "https://stackoverflow.com"
-                      }
-                    }
-                  ]
-                }
-              ]
-            }
-          ],
-          "properties": {
-            "DevSkimSeverity": "Moderate",
-            "DevSkimConfidence": "High",
-            "tags": [
-              "ThreatModel.Integration.HTTP"
-            ]
-          }
-        },
-        {
-          "ruleId": "913104a6-c0e2-32f2-ba50-ceb365778aa1",
+          "ruleId": "2c910491-3474-376e-9081-661bc14a6fb3",
           "kind": "fail",
           "level": "warning",
           "message": {
@@ -415,17 +326,17 @@
                   "uri": "shared/CLI11.hpp"
                 },
                 "region": {
-                  "startLine": 381,
-                  "startColumn": 91,
-                  "endLine": 381,
-                  "endColumn": 97,
-                  "charOffset": 11702,
+                  "startLine": 1228,
+                  "startColumn": 18,
+                  "endLine": 1228,
+                  "endColumn": 24,
+                  "charOffset": 42444,
                   "charLength": 6,
                   "snippet": {
-                    "text": "wcslen",
+                    "text": "getenv",
                     "rendered": {
-                      "text": "wcslen",
-                      "markdown": "`wcslen`"
+                      "text": "getenv",
+                      "markdown": "`getenv`"
                     }
                   },
                   "sourceLanguage": "cpp"
@@ -530,46 +441,6 @@
           }
         },
         {
-          "ruleId": "2c910491-3474-376e-9081-661bc14a6fb3",
-          "kind": "fail",
-          "level": "warning",
-          "message": {
-            "text": "\"Prohibited C Function Found\""
-          },
-          "locations": [
-            {
-              "physicalLocation": {
-                "artifactLocation": {
-                  "uri": "shared/CLI11.hpp"
-                },
-                "region": {
-                  "startLine": 1228,
-                  "startColumn": 18,
-                  "endLine": 1228,
-                  "endColumn": 24,
-                  "charOffset": 42444,
-                  "charLength": 6,
-                  "snippet": {
-                    "text": "getenv",
-                    "rendered": {
-                      "text": "getenv",
-                      "markdown": "`getenv`"
-                    }
-                  },
-                  "sourceLanguage": "cpp"
-                }
-              }
-            }
-          ],
-          "properties": {
-            "DevSkimSeverity": "Moderate",
-            "DevSkimConfidence": "High",
-            "tags": [
-              "API.DangerousAPI.BannedFunction"
-            ]
-          }
-        },
-        {
           "ruleId": "79c0374a-e9fe-3b20-aea9-9922553709f6",
           "kind": "fail",
           "level": "warning",
@@ -594,6 +465,46 @@
                     "rendered": {
                       "text": "mbsrtowcs",
                       "markdown": "`mbsrtowcs`"
+                    }
+                  },
+                  "sourceLanguage": "cpp"
+                }
+              }
+            }
+          ],
+          "properties": {
+            "DevSkimSeverity": "Moderate",
+            "DevSkimConfidence": "High",
+            "tags": [
+              "API.DangerousAPI.BannedFunction"
+            ]
+          }
+        },
+        {
+          "ruleId": "913104a6-c0e2-32f2-ba50-ceb365778aa1",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "\"Prohibited C Function Found\""
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "shared/CLI11.hpp"
+                },
+                "region": {
+                  "startLine": 381,
+                  "startColumn": 91,
+                  "endLine": 381,
+                  "endColumn": 97,
+                  "charOffset": 11702,
+                  "charLength": 6,
+                  "snippet": {
+                    "text": "wcslen",
+                    "rendered": {
+                      "text": "wcslen",
+                      "markdown": "`wcslen`"
                     }
                   },
                   "sourceLanguage": "cpp"
@@ -650,6 +561,46 @@
           }
         },
         {
+          "ruleId": "7761f7ac-9322-37e9-8ce0-ed9dc42b3c3d",
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Detected Prohibited C Function"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "shared/CLI11.hpp"
+                },
+                "region": {
+                  "startLine": 336,
+                  "startColumn": 9,
+                  "endLine": 336,
+                  "endColumn": 18,
+                  "charOffset": 10103,
+                  "charLength": 9,
+                  "snippet": {
+                    "text": "wcsrtombs",
+                    "rendered": {
+                      "text": "wcsrtombs",
+                      "markdown": "`wcsrtombs`"
+                    }
+                  },
+                  "sourceLanguage": "cpp"
+                }
+              }
+            }
+          ],
+          "properties": {
+            "DevSkimSeverity": "Moderate",
+            "DevSkimConfidence": "High",
+            "tags": [
+              "API.DangerousAPI.BannedFunction"
+            ]
+          }
+        },
+        {
           "ruleId": "79ab5b78-9e7f-3749-b932-ab53782ce9aa",
           "kind": "fail",
           "level": "warning",
@@ -690,7 +641,7 @@
           }
         },
         {
-          "ruleId": "88c1823c-f73f-3e6d-bba2-cbe84d2ee534",
+          "ruleId": "76e61e6d-817b-3798-9c50-100318ea0644",
           "kind": "fail",
           "level": "warning",
           "message": {
@@ -703,11 +654,11 @@
                   "uri": "shared/CLI11.hpp"
                 },
                 "region": {
-                  "startLine": 330,
-                  "startColumn": 32,
-                  "endLine": 330,
-                  "endColumn": 41,
-                  "charOffset": 9805,
+                  "startLine": 332,
+                  "startColumn": 72,
+                  "endLine": 332,
+                  "endColumn": 81,
+                  "charOffset": 9964,
                   "charLength": 9,
                   "snippet": {
                     "text": "wcsrtombs",
@@ -818,7 +769,7 @@
           }
         },
         {
-          "ruleId": "7761f7ac-9322-37e9-8ce0-ed9dc42b3c3d",
+          "ruleId": "88c1823c-f73f-3e6d-bba2-cbe84d2ee534",
           "kind": "fail",
           "level": "warning",
           "message": {
@@ -831,51 +782,11 @@
                   "uri": "shared/CLI11.hpp"
                 },
                 "region": {
-                  "startLine": 336,
-                  "startColumn": 9,
-                  "endLine": 336,
-                  "endColumn": 18,
-                  "charOffset": 10103,
-                  "charLength": 9,
-                  "snippet": {
-                    "text": "wcsrtombs",
-                    "rendered": {
-                      "text": "wcsrtombs",
-                      "markdown": "`wcsrtombs`"
-                    }
-                  },
-                  "sourceLanguage": "cpp"
-                }
-              }
-            }
-          ],
-          "properties": {
-            "DevSkimSeverity": "Moderate",
-            "DevSkimConfidence": "High",
-            "tags": [
-              "API.DangerousAPI.BannedFunction"
-            ]
-          }
-        },
-        {
-          "ruleId": "76e61e6d-817b-3798-9c50-100318ea0644",
-          "kind": "fail",
-          "level": "warning",
-          "message": {
-            "text": "Detected Prohibited C Function"
-          },
-          "locations": [
-            {
-              "physicalLocation": {
-                "artifactLocation": {
-                  "uri": "shared/CLI11.hpp"
-                },
-                "region": {
-                  "startLine": 332,
-                  "startColumn": 72,
-                  "endLine": 332,
-                  "endColumn": 81,
-                  "charOffset": 9964,
+                  "startLine": 330,
+                  "startColumn": 32,
+                  "endLine": 330,
+                  "endColumn": 41,
+                  "charOffset": 9805,
                   "charLength": 9,
                   "snippet": {
                     "text": "wcsrtombs",
@@ -978,30 +889,30 @@
           }
         },
         {
-          "ruleId": "2e1e9cba-9e14-3be2-b1dc-8979450f12d4",
+          "ruleId": "36eb4e25-8896-3116-a207-c403d125d87c",
           "kind": "fail",
-          "level": "note",
+          "level": "warning",
           "message": {
-            "text": "Problematic C function detected (memcpy)"
+            "text": "\"Prohibited C Function Identified\""
           },
           "locations": [
             {
               "physicalLocation": {
                 "artifactLocation": {
-                  "uri": "library/src/plan.cpp"
+                  "uri": "library/src/rtc_test_harness.cpp"
                 },
                 "region": {
-                  "startLine": 3245,
-                  "startColumn": 4,
-                  "endLine": 3245,
-                  "endColumn": 28,
-                  "charOffset": 128328,
-                  "charLength": 24,
+                  "startLine": 256,
+                  "startColumn": 29,
+                  "endLine": 256,
+                  "endColumn": 35,
+                  "charOffset": 10013,
+                  "charLength": 6,
                   "snippet": {
-                    "text": "memcpy(buf, v, sizeof(v)",
+                    "text": "printf",
                     "rendered": {
-                      "text": "memcpy(buf, v, sizeof(v)",
-                      "markdown": "`memcpy(buf, v, sizeof(v)`"
+                      "text": "printf",
+                      "markdown": "`printf`"
                     }
                   },
                   "sourceLanguage": "cpp"
@@ -1009,36 +920,11 @@
               }
             }
           ],
-          "fixes": [
-            {
-              "description": {
-                "text": "There are a number of conditions in which memcpy can introduce a vulnerability (mismatched buffer sizes, null pointers, etc.). More secure alternitives perform additional validation of the source and destination buffer"
-              },
-              "artifactChanges": [
-                {
-                  "artifactLocation": {
-                    "uri": "library/src/plan.cpp"
-                  },
-                  "replacements": [
-                    {
-                      "deletedRegion": {
-                        "charOffset": 128328,
-                        "charLength": 24
-                      },
-                      "insertedContent": {
-                        "text": "memcpy_s(buf, <size of buf>,  v,  sizeof(v)"
-                      }
-                    }
-                  ]
-                }
-              ]
-            }
-          ],
           "properties": {
-            "DevSkimSeverity": "BestPractice",
+            "DevSkimSeverity": "Moderate",
             "DevSkimConfidence": "High",
             "tags": [
-              "API.DangerousAPI.ProblematicFunction"
+              "API.DangerousAPI.BannedFunction"
             ]
           }
         },
@@ -1083,111 +969,6 @@
           }
         },
         {
-          "ruleId": "7474cfd7-d858-330b-8f4f-355943ea6882",
-          "kind": "fail",
-          "level": "note",
-          "message": {
-            "text": "Problematic C function detected (memcpy)"
-          },
-          "locations": [
-            {
-              "physicalLocation": {
-                "artifactLocation": {
-                  "uri": "shared/hostbuf.h"
-                },
-                "region": {
-                  "startLine": 176,
-                  "startColumn": 8,
-                  "endLine": 176,
-                  "endColumn": 36,
-                  "charOffset": 5054,
-                  "charLength": 28,
-                  "snippet": {
-                    "text": "memcpy(copy.buf, buf, bsize)",
-                    "rendered": {
-                      "text": "memcpy(copy.buf, buf, bsize)",
-                      "markdown": "`memcpy(copy.buf, buf, bsize)`"
-                    }
-                  },
-                  "sourceLanguage": "c"
-                }
-              }
-            }
-          ],
-          "fixes": [
-            {
-              "description": {
-                "text": "There are a number of conditions in which memcpy can introduce a vulnerability (mismatched buffer sizes, null pointers, etc.). More secure alternitives perform additional validation of the source and destination buffer"
-              },
-              "artifactChanges": [
-                {
-                  "artifactLocation": {
-                    "uri": "shared/hostbuf.h"
-                  },
-                  "replacements": [
-                    {
-                      "deletedRegion": {
-                        "charOffset": 5054,
-                        "charLength": 28
-                      },
-                      "insertedContent": {
-                        "text": "memcpy_s(copy.buf, <size of copy.buf>,  buf,  bsize)"
-                      }
-                    }
-                  ]
-                }
-              ]
-            }
-          ],
-          "properties": {
-            "DevSkimSeverity": "BestPractice",
-            "DevSkimConfidence": "High",
-            "tags": [
-              "API.DangerousAPI.ProblematicFunction"
-            ]
-          }
-        },
-        {
-          "ruleId": "36eb4e25-8896-3116-a207-c403d125d87c",
-          "kind": "fail",
-          "level": "warning",
-          "message": {
-            "text": "\"Prohibited C Function Identified\""
-          },
-          "locations": [
-            {
-              "physicalLocation": {
-                "artifactLocation": {
-                  "uri": "library/src/rtc_test_harness.cpp"
-                },
-                "region": {
-                  "startLine": 256,
-                  "startColumn": 29,
-                  "endLine": 256,
-                  "endColumn": 35,
-                  "charOffset": 10013,
-                  "charLength": 6,
-                  "snippet": {
-                    "text": "printf",
-                    "rendered": {
-                      "text": "printf",
-                      "markdown": "`printf`"
-                    }
-                  },
-                  "sourceLanguage": "cpp"
-                }
-              }
-            }
-          ],
-          "properties": {
-            "DevSkimSeverity": "Moderate",
-            "DevSkimConfidence": "High",
-            "tags": [
-              "API.DangerousAPI.BannedFunction"
-            ]
-          }
-        },
-        {
           "ruleId": "3f785c5e-ea2f-3f0a-bcf2-ee07b36cbb3b",
           "kind": "fail",
           "level": "error",
@@ -1215,46 +996,6 @@
                     }
                   },
                   "sourceLanguage": "c"
-                }
-              }
-            }
-          ],
-          "properties": {
-            "DevSkimSeverity": "Important",
-            "DevSkimConfidence": "High",
-            "tags": [
-              "Cryptography.PRNG.Weak"
-            ]
-          }
-        },
-        {
-          "ruleId": "5c308817-824c-3fd4-b722-2acf44b3c4c0",
-          "kind": "fail",
-          "level": "error",
-          "message": {
-            "text": "Avoid Using Weak or Non-Cryptographic Random Number Generators"
-          },
-          "locations": [
-            {
-              "physicalLocation": {
-                "artifactLocation": {
-                  "uri": "clients/bench/dyna-bench.cpp"
-                },
-                "region": {
-                  "startLine": 732,
-                  "startColumn": 17,
-                  "endLine": 732,
-                  "endColumn": 25,
-                  "charOffset": 26078,
-                  "charLength": 8,
-                  "snippet": {
-                    "text": "shuffle(",
-                    "rendered": {
-                      "text": "shuffle(",
-                      "markdown": "`shuffle(`"
-                    }
-                  },
-                  "sourceLanguage": "cpp"
                 }
               }
             }
@@ -1388,6 +1129,46 @@
           }
         },
         {
+          "ruleId": "5c308817-824c-3fd4-b722-2acf44b3c4c0",
+          "kind": "fail",
+          "level": "error",
+          "message": {
+            "text": "Avoid Using Weak or Non-Cryptographic Random Number Generators"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "clients/bench/dyna-bench.cpp"
+                },
+                "region": {
+                  "startLine": 732,
+                  "startColumn": 17,
+                  "endLine": 732,
+                  "endColumn": 25,
+                  "charOffset": 26078,
+                  "charLength": 8,
+                  "snippet": {
+                    "text": "shuffle(",
+                    "rendered": {
+                      "text": "shuffle(",
+                      "markdown": "`shuffle(`"
+                    }
+                  },
+                  "sourceLanguage": "cpp"
+                }
+              }
+            }
+          ],
+          "properties": {
+            "DevSkimSeverity": "Important",
+            "DevSkimConfidence": "High",
+            "tags": [
+              "Cryptography.PRNG.Weak"
+            ]
+          }
+        },
+        {
           "ruleId": "36521c3e-ad9b-3685-a485-51f1c18cf064",
           "kind": "fail",
           "level": "warning",
@@ -1424,6 +1205,136 @@
             "DevSkimConfidence": "High",
             "tags": [
               "API.DangerousAPI.BannedFunction"
+            ]
+          }
+        },
+        {
+          "ruleId": "2e1e9cba-9e14-3be2-b1dc-8979450f12d4",
+          "kind": "fail",
+          "level": "note",
+          "message": {
+            "text": "Problematic C function detected (memcpy)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "library/src/plan.cpp"
+                },
+                "region": {
+                  "startLine": 3245,
+                  "startColumn": 4,
+                  "endLine": 3245,
+                  "endColumn": 28,
+                  "charOffset": 128328,
+                  "charLength": 24,
+                  "snippet": {
+                    "text": "memcpy(buf, v, sizeof(v)",
+                    "rendered": {
+                      "text": "memcpy(buf, v, sizeof(v)",
+                      "markdown": "`memcpy(buf, v, sizeof(v)`"
+                    }
+                  },
+                  "sourceLanguage": "cpp"
+                }
+              }
+            }
+          ],
+          "fixes": [
+            {
+              "description": {
+                "text": "There are a number of conditions in which memcpy can introduce a vulnerability (mismatched buffer sizes, null pointers, etc.). More secure alternitives perform additional validation of the source and destination buffer"
+              },
+              "artifactChanges": [
+                {
+                  "artifactLocation": {
+                    "uri": "library/src/plan.cpp"
+                  },
+                  "replacements": [
+                    {
+                      "deletedRegion": {
+                        "charOffset": 128328,
+                        "charLength": 24
+                      },
+                      "insertedContent": {
+                        "text": "memcpy_s(buf, <size of buf>,  v,  sizeof(v)"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "DevSkimSeverity": "BestPractice",
+            "DevSkimConfidence": "High",
+            "tags": [
+              "API.DangerousAPI.ProblematicFunction"
+            ]
+          }
+        },
+        {
+          "ruleId": "7474cfd7-d858-330b-8f4f-355943ea6882",
+          "kind": "fail",
+          "level": "note",
+          "message": {
+            "text": "Problematic C function detected (memcpy)"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "shared/hostbuf.h"
+                },
+                "region": {
+                  "startLine": 176,
+                  "startColumn": 8,
+                  "endLine": 176,
+                  "endColumn": 36,
+                  "charOffset": 5054,
+                  "charLength": 28,
+                  "snippet": {
+                    "text": "memcpy(copy.buf, buf, bsize)",
+                    "rendered": {
+                      "text": "memcpy(copy.buf, buf, bsize)",
+                      "markdown": "`memcpy(copy.buf, buf, bsize)`"
+                    }
+                  },
+                  "sourceLanguage": "c"
+                }
+              }
+            }
+          ],
+          "fixes": [
+            {
+              "description": {
+                "text": "There are a number of conditions in which memcpy can introduce a vulnerability (mismatched buffer sizes, null pointers, etc.). More secure alternitives perform additional validation of the source and destination buffer"
+              },
+              "artifactChanges": [
+                {
+                  "artifactLocation": {
+                    "uri": "shared/hostbuf.h"
+                  },
+                  "replacements": [
+                    {
+                      "deletedRegion": {
+                        "charOffset": 5054,
+                        "charLength": 28
+                      },
+                      "insertedContent": {
+                        "text": "memcpy_s(copy.buf, <size of copy.buf>,  buf,  bsize)"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "properties": {
+            "DevSkimSeverity": "BestPractice",
+            "DevSkimConfidence": "High",
+            "tags": [
+              "API.DangerousAPI.ProblematicFunction"
             ]
           }
         }
